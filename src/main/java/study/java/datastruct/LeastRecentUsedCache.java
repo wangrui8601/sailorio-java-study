@@ -193,38 +193,5 @@ public class LeastRecentUsedCache {
 		System.out.println(cache);//1,4,2,5,6,7,8,9,0,3
 		cache.Insert(11, 110);
 		System.out.println(cache);//4,2,5,6,7,8,9,0,3,11
-	
-		System.out.println(GetKeyCount("hello world"));
-		System.out.println(GetOrder(GetKeyCount("hello world")));
 	}
-	
-	public static Map<Character, Integer> GetKeyCount(String line) {
-		Map<Character, Integer> key_count = new HashMap<Character, Integer>();
-		int size = line.length();
-		for (int index = 0; index < size; ++index) {
-			char ch = line.charAt(index);
-			if (key_count.containsKey(ch)) {
-				Integer count = key_count.get(ch);
-				key_count.put(ch, count + 1);
-			} else {
-				key_count.put(ch, 1);
-			}
-		}
-		return key_count;
-	}
-	
-	
-	public static List<Entry<Character, Integer>> GetOrder(
-			Map<Character, Integer> map) {
-		List<Entry<Character, Integer>> list = new ArrayList<Entry<Character, Integer>>(
-				map.entrySet());
-		Collections.sort(list, new Comparator<Entry<Character, Integer>>() {
-			public int compare(Entry<Character, Integer> arg0,
-					Entry<Character, Integer> arg1) {
-				return arg1.getValue().compareTo(arg0.getValue());
-			}
-		});
-		return list;
-	}
-	
 }
