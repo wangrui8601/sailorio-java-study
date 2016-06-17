@@ -193,4 +193,24 @@ public class MySort {
 		}
 		System.out.println(count);
 	}
+	
+	public static int getSite(int[] array, int low, int high){
+		int l = low;
+		int h = high;
+		int temp = array[l];
+		while(l != h){
+			while(l != h && array[h] >= temp){
+				--h;
+			}
+			if(l == h){
+				return l;
+			} else {
+				array[l] = array[h];
+				++l;
+			}
+			
+			while(l != h && array[l] )
+		}
+		return 0;
+	}
 }
