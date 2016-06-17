@@ -12,9 +12,9 @@ public class MySort {
 	
 	
 	public static void main(String[] args){
-		int[] array = {0,9,7,8,6,5,4,3,2,1,0,5};
+		int[] array = {0,1,2,3,4,5};
 		print(array);
-		selectSort(array);
+		bubbleSort(array);
 		print(array);
 	}
 	
@@ -133,5 +133,64 @@ public class MySort {
 				array[i] = temp;
 			}
 		}
+	}
+	
+	//以当前节点i为根节点的子树不是堆，但是节点i的左右子树都是堆时，算法adjust把第i个节点作为根据点的子树调整为一个新的堆积
+	//即完成array[i]与其左右子树根节点array[2i+1]与array[2i+2]中最大值交换位置；若交换位置以后破坏了子树的堆特性，则最对这棵子树重复交换位置的操作，
+	//直到以节点i为根节点的子树成为堆
+	public static void adjust(int[] array, int length, int i){
+		int temp = array[i];
+		int j = 2 * i + 1;
+		while(j < length){
+			if(j + 1 < length && array[j + 1] > array[j]){
+				j = j + 1;
+			}
+			if(array[j] <= temp){
+				break;
+			}
+			array[(j - 1)/2] = array[j];
+			j = 2 * j + 1;
+		}
+		array[(j - 1)/2] = temp;
+	}
+	
+	//堆排序的关键是：
+	//1.将待排序序列构造成堆，包括如何将原始序列构造成一个初始堆
+	//2.如何将移走了最大值元素以后的剩余元素组成的序列再构造成一个新的堆
+	public static void heapSort(int[] array){
+		int length = array.length;
+		//从最右边的中间节点(最后一个节点的父节点)开始至第一个节点为止，循环调用函数adjust，将初始待排序序列调整为堆
+		for(int i = (length-2)/2; i >= 0; --i){
+			adjust(array, length, i);
+		}
+		//从序列的最后一个元素开始至第二个元素为止，循环将第一个元素与此元素交换，然后调整第一个元素至此元素之前元素成为一个堆
+		for(int i = length - 1; i >= 1; --i){
+			int temp = array[i];
+			array[i] = array[0];
+			array[0] = temp;
+			
+			adjust(array, i, 0);
+		}
+	}
+	
+	public static void bubbleSort(int[] array){
+		int length = array.length;
+		boolean swap = false;
+		int count = 0;
+		for(int i = length - 2; i >= 0; --i){
+			++count;
+			for(int j = 0; j <= i; ++j){
+				if(array[j] > array[j + 1]){
+					swap = true;
+					int temp = array[j];
+					array[j] = array[j + 1];
+					array[j + 1] = temp;
+				}
+			}
+			if(!swap)
+				break;
+			swap = true;
+		}
+		System.out.println(count);
 	}
 }
