@@ -1,5 +1,6 @@
 package study.java.datastruct;
 
+import java.util.LinkedList;
 import java.util.Stack;
 
 /*
@@ -44,9 +45,9 @@ public class BinTree {
 		
 		nodeC.lchild = nodeF;
 		
-		nodeE.lchild = nodeG;
+		//nodeE.lchild = nodeG;
 		
-		nodeF.rchild = nodeH;
+		//nodeF.rchild = nodeH;
 	}
 	
 	//递归前序遍历
@@ -140,6 +141,140 @@ public class BinTree {
 		}
 	}
 	
+	//非递归层次遍历
+	public void levelOrder(){
+		LinkedList<TreeNode> queue = new LinkedList<TreeNode>();
+		TreeNode p = root;
+		if(p != null)
+			queue.add(p);
+		while(!queue.isEmpty()){
+			p = queue.remove();
+			p.visit();
+			if(p.lchild != null)
+				queue.add(p.lchild);
+			if(p.rchild != null)
+				queue.add(p.rchild);
+		}
+		
+	}
+	
+	//利用层次遍历交换左右节点
+	public void exchangeChild(){
+		LinkedList<TreeNode> queue = new LinkedList<TreeNode>();
+		TreeNode p = root;
+		if(p != null){
+			queue.add(p);
+		}
+		
+		while(!queue.isEmpty()){
+			p = queue.remove();
+			TreeNode q = p.lchild;
+			p.lchild = p.rchild;
+			p.rchild = q;
+			
+			if(p.lchild != null)
+				queue.add(p.lchild);
+			if(p.rchild != null)
+				queue.add(p.rchild);
+		}
+	}
+	
+	//后序遍历计算节点所在层次
+	public int getNodeLevel(char data){
+		Stack<TreeNode> stack = new Stack<TreeNode>();
+		TreeNode p = root;
+		
+		while(!stack.isEmpty() || p != null){
+			while(p != null){
+				stack.push(p);
+				p = p.lchild;
+			}
+			
+			p = stack.peek();
+			if(!p.flag){
+				p.flag = true;
+				p = p.rchild;
+			}else{
+				if(p.data == data){
+					return stack.size();
+				}
+				stack.pop();
+				p = null;
+			}
+			
+		}
+		return -1;
+	}
+	
+	//递归前序遍历求二叉树的深度
+	private int getDeep(TreeNode node){
+		if(node == null)
+			return 0;
+		int lDeep = getDeep(node.lchild);
+		int rDeep = getDeep(node.rchild);
+		return (lDeep >= rDeep) ? 1 + lDeep : 1 + rDeep;
+	}
+	public int recursionGetDeep(){
+		return getDeep(root);
+	}
+	
+	//非递归中序遍历求二叉树的深度
+	public int inOrderGetDeep(){
+		Stack<TreeNode> stackNode = new Stack<TreeNode>();
+		Stack<Integer> stackLevel = new Stack<Integer>();
+		TreeNode p = root;
+		int curLevel = 0;
+		int maxLevel = 0;
+		while(!stackNode.isEmpty() || p != null){
+			while(p != null){
+				stackNode.push(p);
+				curLevel = curLevel + 1;
+				stackLevel.push(curLevel);
+				p = p.lchild;
+			}
+			
+			p = stackNode.pop();
+			curLevel = stackLevel.pop();
+			if(curLevel > maxLevel){
+				maxLevel = curLevel;
+			}
+			
+			p = p.rchild;
+		}
+		
+		return maxLevel;
+	}
+	
+	//非递归后序遍历求二叉树的深度
+	public int postOrderGetDeep(){
+		Stack<TreeNode> stack = new Stack<TreeNode>();
+		TreeNode p = root;
+		int maxDeep = 0;
+		
+		while(!stack.isEmpty() || p != null){
+			while(p != null){
+				stack.push(p);
+				p = p.lchild;
+			}
+			
+			p = stack.peek();
+			if(!p.flag){
+				p.flag = true;
+				p = p.rchild;
+			} else{
+				if(stack.size() > maxDeep){
+					maxDeep = stack.size();
+				}
+				
+				stack.pop();
+				p = null;
+			}
+			
+		}
+		return maxDeep;
+	}
+	
+	
 	public static void main(String[] args){
 		BinTree tree = new BinTree();
 		tree.recursionPreOrder();
@@ -152,7 +287,19 @@ public class BinTree {
 		System.out.println();
 		tree.recursionPostOrder();
 		System.out.println();
-		tree.PostOrder();
-
+		/*tree.PostOrder();
+		System.out.println();*/
+		tree.levelOrder();
+		System.out.println();
+		/*tree.exchangeChild();
+		tree.levelOrder();
+		System.out.println();
+		tree.InOrder();
+		System.out.println();
+		*/
+		//System.out.println(tree.getNodeLevel('H')); 
+		System.out.println(tree.recursionGetDeep());
+		System.out.println(tree.inOrderGetDeep());
+		System.out.println(tree.postOrderGetDeep());
 	}
 }
