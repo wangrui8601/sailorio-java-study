@@ -12,9 +12,9 @@ public class MySort {
 	
 	
 	public static void main(String[] args){
-		int[] array = {0,1,2,3,4,5};
+		int[] array = {9,8,0, 10, 1 ,7,6,5,4,3,2,1};
 		print(array);
-		bubbleSort(array);
+		quickSort(array);
 		print(array);
 	}
 	
@@ -29,6 +29,14 @@ public class MySort {
 		System.out.println(builder.toString());
 	}
  	
+	/*
+	 * 直接插入排序
+	 * 最好的情况：原始序列是一个按值递增序列时，时间复杂度O(n)
+	 * 最坏的情况：原始序列是一个按值递减序列时，时间复杂度O(n^2)
+	 * 平均时间复杂度O(n^2)
+	 * 整个排序过程只需要一个辅助空间temp，所以空间复杂度O(1),就地排序
+	 * 属于稳定性排序方法  
+	 */
 	public static void straightInsertSort(int[] array){
 		//获取数组长度
 		int length = array.length;
@@ -55,6 +63,9 @@ public class MySort {
 		}
 	}
 	
+	/*
+	 * 二分查找排序
+	 */
 	public static void binInsertSort(int[] array){
 		//获取数组长度
 		int length = array.length;
@@ -90,6 +101,14 @@ public class MySort {
 		}
 	}
 	
+	/*
+	 * 希尔排序
+	 * 希尔排序的时间性能优于直接插入排序的原因 
+	 * 	1.当原始序列基本有序时直接插入排序所需的比较和移动次数均较少 
+	 *  2.当n值较小时，n和n^2的差别也较小，即直接插入排序的最好时间复杂度O(n)和最坏时间复杂度O(n^2)差别不大  
+	 *  3.在希尔排序开始时增量d=n/2较大，每组的记录数目少，故各组内直接插入较快，后来增量d逐渐缩小，各组的记录数目逐渐增多，但是经过上次的排序，使序列接近于有序状态，所以新的一趟排序过程也较快  
+	 *  希尔排序属于不稳定性排序 
+	 */
 	public static void shellSort(int[] array){
 		int length = array.length;
 		int temp = 0;
@@ -113,6 +132,12 @@ public class MySort {
 		}
 	}
 	
+	/*
+	 * 简单选择排序
+	 * 无论序列中元素的初始排列状态如何，第i趟排序要找出值最小元素都需要进行n-i次元素之间的比较，总共的比较次数为n*(n-1)/2。
+	 * 这说明选择排序法所进行的元素之间的比较次数与序列的原始状态无关，可以确定算法的时间复杂度为O(n^2) 
+	 * 选择排序法属于不稳定性排序方法  
+	 */
 	public static void selectSort(int[] array){
 		//不稳定排序， 例如5 8 5 2 9
 		int length = array.length;
@@ -135,6 +160,12 @@ public class MySort {
 		}
 	}
 	
+	/*
+	 * 堆排序
+	 * 时间复杂度O(nlgn)
+	 * 空间复杂度O(1)
+	 * 属于不稳定性排序  
+	 */
 	//以当前节点i为根节点的子树不是堆，但是节点i的左右子树都是堆时，算法adjust把第i个节点作为根据点的子树调整为一个新的堆积
 	//即完成array[i]与其左右子树根节点array[2i+1]与array[2i+2]中最大值交换位置；若交换位置以后破坏了子树的堆特性，则最对这棵子树重复交换位置的操作，
 	//直到以节点i为根节点的子树成为堆
@@ -173,6 +204,20 @@ public class MySort {
 		}
 	}
 	
+	
+	/*
+	 * 冒泡排序 
+	 * 最好的情况：原始序列是一个按值递增序列时，时间复杂度O(n)
+	 * 最坏的情况：原始序列是一个按值递减序列时，时间复杂度O(n^2)
+	 * 平均时间复杂度O(n^2)
+	 * 空间复杂度O(1),就地排序  
+	 * 属于稳定性排序方法  
+	 */
+	//每趟排序都从第一个元素开始一次比较相邻的两个元素， 若两个元素位置与其顺序相反则交换它们的位置，
+	//这样一趟排序之后最大的元素会被移到待排序的最后，
+	//第一趟排序从序列的第一个元素开始至第length-1个元素依次与之后面相邻的元素比较， 这样最大的元素被放在第length的位置
+	//第二趟排序从序列的第一个元素开始至第length-2个元素···
+	//设置一个交换标志位，若一趟排序中未发生交换动作，说明序列已经有序，可以减少比较的次数
 	public static void bubbleSort(int[] array){
 		int length = array.length;
 		boolean swap = false;
@@ -194,6 +239,18 @@ public class MySort {
 		System.out.println(count);
 	}
 	
+	/*
+	 * 快速排序
+	 * 最好的情况：每趟排序后，分界元素正好定位在序列的中间，从而把当前参加排序的序列分成大小相等的前后两个子序列，每次划分比较次数不大于n，需要经过lgn次的划分，所以最好的情况下，时间复杂度为O(nlgn)  
+	 * 最坏的情况：原始序列在有序的情况下，快速排序的方法用时最长，此时，第一趟排序经过n-1次比较，将第一个元素仍确定在原来的位置上，并得到一个长度为n-1的子序列；第二趟排序经过n-2次比较，将第2个元素确定在它原来的位置上，又得到一个长度为n-2的子序列；以此类推，其最坏的i时间复杂度为O(n^2)  
+	 * 平均时间复杂度为O(nlgn)  
+	 * 空间复杂度：快速排序在系统内部需要一个栈来实现递归。若每次划分较为均匀，则其递归树的高度为O(lgn)，故递归后需栈空间为O(lgn)。最坏情况下，递归树的高度为O(n)，所需的栈空间为O(n)。  
+	 * 属性不稳定性排序方法  
+	 */
+	//1.在待排序序列中选择第一个元素作为当前元素， 然后将剩余元素从两端开始向中间聚拢，依次与当前元素比较
+	//2.先从高位向低位移动，找到小于当前元素的元素，将其放到低位位置
+	//3.再从低位向高位移动，找到大于当前元素的元素，将其放到高位位置
+	//4.重复上述步骤2和3，一直到高位与低位相等，说明这个位置的左边序列小于当前元素， 而右边的序列都大于当前元素，将当前元素放到这个位置上，并返回位置
 	public static int getSite(int[] array, int low, int high){
 		int l = low;
 		int h = high;
@@ -202,15 +259,35 @@ public class MySort {
 			while(l != h && array[h] >= temp){
 				--h;
 			}
-			if(l == h){
-				return l;
-			} else {
+			if(l != h){
 				array[l] = array[h];
 				++l;
 			}
 			
-			while(l != h && array[l] )
+			while(l != h && array[l] <= temp){
+				++l;
+			} 
+			if(l != h){
+				array[h] = array[l];
+				--h;
+			}
 		}
-		return 0;
+		array[l] = temp;
+		return l;
+	}
+	
+	//递归，如果低位小于高位，则调用上述getSite方法，找到一个合适的位置，使得这个位置上的元素大于它左边的序列小于右边的序列
+	//以这个位置为分割点，依次将左序列和右序列排序
+	public static void quick(int[] array, int low, int high){
+		if(low < high){
+			int index = getSite(array, low, high);
+			quick(array, low, index - 1);
+			quick(array, index + 1, high);
+		}
+	}
+	
+	public static void quickSort(int[] array){
+		int length = array.length;
+		quick(array, 0, length - 1);
 	}
 }
