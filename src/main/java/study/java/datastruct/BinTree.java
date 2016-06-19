@@ -18,6 +18,10 @@ class TreeNode{
 		rchild = null;
 	}
 	
+	public String toString(){
+		return String.valueOf(data);
+	}
+	
 	public void visit(){
 		System.out.printf("%s ", data);
 	}
@@ -45,9 +49,9 @@ public class BinTree {
 		
 		nodeC.lchild = nodeF;
 		
-		//nodeE.lchild = nodeG;
+		nodeE.lchild = nodeG;
 		
-		//nodeF.rchild = nodeH;
+		nodeF.rchild = nodeH;
 	}
 	
 	//递归前序遍历
@@ -198,7 +202,7 @@ public class BinTree {
 				if(p.data == data){
 					return stack.size();
 				}
-				stack.pop();
+				stack.pop(); 
 				p = null;
 			}
 			
@@ -269,11 +273,109 @@ public class BinTree {
 				stack.pop();
 				p = null;
 			}
-			
 		}
 		return maxDeep;
 	}
 	
+	//前序遍历重置访问标志
+	public void resetFlag(){
+		Stack<TreeNode> stack = new Stack<TreeNode>();
+		TreeNode p = root;
+		while(!stack.isEmpty() || p != null){
+			while(p != null){
+				p.flag = false;
+				stack.push(p);
+				p = p.lchild;
+			}
+			
+			p = stack.pop();
+			p = p.rchild;
+		}
+	}
+	//递归后序遍历销毁指定根节点的树
+	private void destroy(TreeNode node){
+		if(node != null){
+			destroy(node.lchild);
+			destroy(node.rchild);
+			node = null;
+		}
+	}
+	public void recursionDestroy(){
+		destroy(root);
+	}
+	
+	//非递归后序遍历销毁指定根节点的树
+	public void postOrderDestroy(TreeNode node){
+		Stack<TreeNode> stack = new Stack<TreeNode>();
+		TreeNode p = node;
+		while(!stack.isEmpty() || p != null){
+			while(p != null){
+				stack.push(p);
+				p = p.lchild;
+			}
+			p = stack.peek();
+			if(!p.flag){
+				p.flag = true;
+				p = p.rchild;
+			} else{
+				if(p.lchild != null){
+					p.lchild = null;
+				}
+				if(p.rchild != null){
+					p.rchild = null;
+				}
+				stack.pop();
+				p = null;
+			}
+		}
+	}
+	
+	public void postOrderDestroy(){
+		postOrderDestroy(root);
+		root = null;
+	}
+	
+	//非递归前序遍历找出指定关键字的父节点（指定关键字节点非根节点）
+	public TreeNode[] getParentNode(char key){
+		Stack<TreeNode> stack = new Stack<TreeNode>();
+		TreeNode p = root;
+		TreeNode q = null;
+		while(!stack.isEmpty() || p != null){
+			while(p != null){
+				if(key == p.data){
+					return new TreeNode[]{q, p};
+				}
+				stack.push(p);
+				q = p;
+				p = p.lchild;
+			}
+			p = stack.pop();
+			q = p;
+			p = p.rchild;
+		}
+		return null;
+	}
+	
+	//删除指定关键字的结点以及以此结点为根的二叉树 
+	public void deleteNode(char key){
+		if(root.data == key){
+			postOrderDestroy();
+		} else{
+			TreeNode[] nodes = getParentNode(key);
+			if(nodes != null){
+				TreeNode parent = nodes[0];
+				TreeNode node = nodes[1];
+				if(parent.lchild == node){
+					parent.lchild = null;
+				} else{
+					parent.rchild = null;
+				}
+				
+				postOrderDestroy(node);
+			}
+		}
+		
+	}
 	
 	public static void main(String[] args){
 		BinTree tree = new BinTree();
@@ -287,19 +389,31 @@ public class BinTree {
 		System.out.println();
 		tree.recursionPostOrder();
 		System.out.println();
-		/*tree.PostOrder();
-		System.out.println();*/
+		tree.PostOrder();
+		System.out.println();
+		tree.resetFlag();
 		tree.levelOrder();
 		System.out.println();
-		/*tree.exchangeChild();
+		tree.exchangeChild();
 		tree.levelOrder();
 		System.out.println();
 		tree.InOrder();
 		System.out.println();
-		*/
-		//System.out.println(tree.getNodeLevel('H')); 
+		tree.exchangeChild();
+		
+		System.out.println(tree.getNodeLevel('H')); 
+		tree.resetFlag();
 		System.out.println(tree.recursionGetDeep());
 		System.out.println(tree.inOrderGetDeep());
 		System.out.println(tree.postOrderGetDeep());
+		tree.resetFlag();
+		TreeNode[] p = null;
+		if((p = tree.getParentNode('B')) != null){
+			p[0].visit();
+			p[1].visit();
+		}
+		
+		tree.deleteNode('B');
+		tree.postOrderDestroy();
 	}
 }
