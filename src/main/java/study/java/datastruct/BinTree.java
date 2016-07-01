@@ -1,6 +1,9 @@
 package study.java.datastruct;
 
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Scanner;
 import java.util.Stack;
 
 /*
@@ -31,27 +34,69 @@ public class BinTree {
 	private TreeNode root; //树的根节点
 	
 	
-	public BinTree(){
-		root = new TreeNode('A');
-		TreeNode nodeB = new TreeNode('B');
-		TreeNode nodeC = new TreeNode('C');
-		TreeNode nodeD = new TreeNode('D');
-		TreeNode nodeE = new TreeNode('E');
-		TreeNode nodeF = new TreeNode('F');
-		TreeNode nodeG = new TreeNode('G');
-		TreeNode nodeH = new TreeNode('H');
+	public BinTree() throws IOException{
 		
-		root.lchild = nodeB;
-		root.rchild = nodeC;
+	}
+	
+	public void loadData() throws IOException{
+		root = recursionPreOrderCreate();
+	}
+	
+	//建立二叉树  
+	//非递归（广义表），已知非空二叉树采用广义表形式作为输入，根据输入建立二叉树的二叉链表存储结构，例如A(B(D,E(G)),C(F(,H)))@  
+	public BinTree(String line){
+		int length = line.length();
+		TreeNode p = null;
+		Stack<TreeNode> stack = new Stack<TreeNode>();
+		char ch;
+		//保存左右子树标志，左括号出现(置0）则表示将处理左子树， 逗号出现(置1)则表示要处理右子树。 
+		int flag = 0;
 		
-		nodeB.lchild = nodeD;
-		nodeB.rchild = nodeE;
+		for(int index = 0; index < length; ++index){
+			ch = line.charAt(index);
+			switch(ch){
+			case '(':
+				flag = 0;
+				stack.push(p);
+				break;
+			case ')'://表示当前子树处理完毕， 将子树的根节点出栈
+				stack.pop();
+				break;
+			case ',':
+				flag = 1;
+				break;
+			case '@':
+				return;
+			default://字母，作为二叉树的节点
+				p = new TreeNode(ch);
+				if(root == null){
+					root = p;
+				} else{
+					if(flag == 0){
+						stack.peek().lchild = p;
+					} else{
+						stack.peek().rchild = p;
+					}
+				}
+				break;
+			}
+		}
+	}
+	
+	//递归前序遍历创建二叉树
+	public TreeNode recursionPreOrderCreate() throws IOException{
+		DataInputStream in = new DataInputStream(System.in);
+		char ch = (char) in.read();
+		in.read();//还有一个回车符
 		
-		nodeC.lchild = nodeF;
-		
-		nodeE.lchild = nodeG;
-		
-		nodeF.rchild = nodeH;
+		if(ch == ' '){
+			return null;
+		} else{
+			TreeNode node = new TreeNode(ch);
+			node.lchild = recursionPreOrderCreate();
+			node.rchild = recursionPreOrderCreate();
+			return node;
+		}
 	}
 	
 	//递归前序遍历
@@ -377,10 +422,111 @@ public class BinTree {
 		
 	}
 	
-	public static void main(String[] args){
-		BinTree tree = new BinTree();
+	//前序递归复制二叉树
+	public TreeNode recursionPreOrderCopy(TreeNode r){
+		if(r == null){
+			return null;
+		} else{
+			TreeNode p = new TreeNode(r.data);
+			p.lchild = recursionPreOrderCopy(r.lchild);
+			p.rchild = recursionPreOrderCopy(r.rchild);
+			return p;
+		}
+	}
+	
+	public void copyFrom(BinTree tree){
+		root = recursionPreOrderCopy(tree.root);
+	}
+	
+	//递归判断两个二叉树结构是否相同
+	public boolean similar(TreeNode node1, TreeNode node2){
+		if(node1 == null && node2 == null)
+			return true;
+		if(node1 != null && node2 != null 
+				&& similar(node1.lchild, node2.lchild) 
+				&& similar(node1.rchild, node2.rchild)){
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean similarTree(BinTree tree){
+		return similar(this.root, tree.root);
+	}
+	
+	//递归判断两个二叉树是否相等，即结构相同且对应节点的值也相同
+	public boolean equal(TreeNode node1, TreeNode node2){
+		if(node1 == null && node2 == null)
+			return true;
+		if(node1 != null && node2 != null 
+				&& node1.data == node2.data
+				&& equal(node1.lchild, node2.lchild) && equal(node1.rchild, node2.rchild))
+			return true;
+		return false;
+	}
+	
+	public boolean equalTree(BinTree tree){
+		return equal(this.root, tree.root);
+	}
+	
+	//递归求二叉树的叶节点数
+	public int recursionLeafNum(TreeNode node){
+		if(node == null)
+			return 0;
+		else{
+			if(node.lchild == null && node.rchild == null)
+				return 1;
+			return recursionLeafNum(node.lchild) + recursionLeafNum(node.rchild);
+		}
+	}
+	
+	public int recursionLeafNum(){
+		return this.recursionLeafNum(root);
+	}
+	
+	//非递归前序遍历求二叉树的叶子节点数
+	public int leafNum(){
+		Stack<TreeNode> stack = new Stack<TreeNode>();
+		TreeNode p = root;
+		int count = 0;
+		while(!stack.isEmpty() || p != null){
+			while(p != null){
+				if(p.lchild == null && p.rchild == null)
+					count++;
+				stack.push(p);
+				p = p.lchild;
+			}
+			p = stack.pop();
+			p = p.rchild;
+		}
+		return count;
+	}
+	
+	public static void main(String[] args) throws IOException{
+		BinTree tree = new BinTree("A(B(D,E(G)),C(F(,H)))@");
+		System.out.println(tree.recursionLeafNum());
+		System.out.println(tree.leafNum());
+		/*BinTree tree = new BinTree();
+		tree.loadData();
+		BinTree tree1 = new BinTree();
+		tree1.copyFrom(tree);
+		if(tree1.similarTree(tree)){
+			System.out.println("tree1.similarTree(tree)");
+		}
+		if(tree1.equalTree(tree)){
+			System.out.println("tree1.equalTree(tree)");
+		}
+		
+		TreeNode[] nodes = tree1.getParentNode('F');
+		nodes[0].data = 'c';
+		nodes[1].data = 'f';
+		if(tree1.equalTree(tree)){
+			System.out.println("tree1.equalTree(tree)");
+		}*/
 		tree.recursionPreOrder();
 		System.out.println();
+		/*tree1.recursionPreOrder();
+		System.out.println();*/
 		tree.PreOrder();
 		System.out.println();
 		tree.recursionInOrder();
