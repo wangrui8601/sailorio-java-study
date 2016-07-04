@@ -169,20 +169,85 @@ public class MyLinkedList {
 	
 	//在按值有序的链表中插入一个元素使之仍为有序
 	public void insertElement5(char ch){
-		Node r = null;
-		Node q = header;
 		Node p = new Node(ch);
-		while(q != null && q.data < ch){
-			r = q;
-			q = q.next;
-		}
-		if(r != null){
-			p.next = r.next;
-			r.next = p;
-		} else{
+		Node q = null;
+		Node r = null;
+		if(header == null || ch < header.data){
 			p.next = header;
 			header = p;
+		} else{
+			r = header;
+			q = header.next;
+			while(q != null && ch > q.data){
+				r = q;
+				q = q.next;
+			}
+			p.next = r.next;
+			r.next = p;
 		}
+	}
+	
+	//从非空线性表中删除q所指的节点
+	public char deleteNode(Node p){
+		if(p == header){
+			header = header.next;
+			p.next = null;
+			return p.data;
+		} else{
+			Node q = header;
+			Node r = header.next;
+			while(r != null && r != p){
+				q = r;
+				r = r.next;
+			}
+			if(r == null){
+				System.err.println("not found the node");
+				return '#';
+			} else{
+				q.next = p.next;
+				p.next = null;
+				return p.data;
+			}
+		}
+	}
+	
+	//删除链表中所有值为ch的元素
+	public void deleteItem(char ch){
+		if(header == null)
+			return;
+		
+		Node p = header;
+		Node q = header.next;
+		while(q != null){
+			if(q.data == ch){
+				p.next = q.next;
+				q.next = null;
+				q = p.next;
+			} else{
+				p = q;
+				q = q.next;
+			}
+		}
+		
+		if(header.data == ch){
+			p = header;
+			header = header.next;
+			p.next = null;
+		}
+	}
+	
+	//将两个非空链表连接成一个
+	public void connectlist(MyLinkedList list){
+		Node p = header;
+		while(p.next != null){
+			p = p.next;
+		}
+		p.next = list.header;
+	}
+	
+	//将两个按值有序的非空链表合并成为按值有序的链表
+	public void mergeList(MyLinkedList list){
+		
 	}
 	
 	public static void main(String[] args){
@@ -216,5 +281,15 @@ public class MyLinkedList {
 		System.out.println(list1);
 		list1.insertElement5('e');
 		System.out.println(list1);
+		Node p = list1.find('a');
+		list1.deleteNode(p);
+		System.out.println(list1);
+		System.out.println(list);
+		list.deleteItem('o');
+		System.out.println(list);
+		list.deleteItem('l');
+		System.out.println(list);
+		list.connectlist(list1);
+		System.out.println(list);
 	}
 }
