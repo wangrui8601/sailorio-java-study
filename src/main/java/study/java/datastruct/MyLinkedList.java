@@ -11,6 +11,10 @@ class Node{
 public class MyLinkedList {
 	private Node header;
 	
+	public MyLinkedList(){
+		header = null;
+	}
+	
 	//从字符串构建链表
 	public MyLinkedList(String line){
 		Node p = null;
@@ -289,6 +293,23 @@ public class MyLinkedList {
 		header = h;
 	}
 	
+	//复制链表
+	public MyLinkedList copy(){
+		MyLinkedList list = new MyLinkedList();
+		if(header == null)
+			return list;
+		
+		list.header = new Node(this.header.data);
+		Node p = list.header;
+		Node q = this.header.next;
+		while(q != null){
+			p.next = new Node(q.data);
+			p = p.next;
+			q = q.next;
+		}
+		return list;
+	}
+	
 	public static void main(String[] args){
 		MyLinkedList list = new MyLinkedList("hello world");
 		System.out.println(list);
@@ -335,5 +356,8 @@ public class MyLinkedList {
 		MyLinkedList l2 = new MyLinkedList("fg");
 		l1.mergeList(l2);
 		System.out.println(l1);
+		
+		MyLinkedList l3 = l1.copy();
+		System.out.println(l3);
 	}
 }
