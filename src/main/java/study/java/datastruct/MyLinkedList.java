@@ -247,7 +247,46 @@ public class MyLinkedList {
 	
 	//将两个按值有序的非空链表合并成为按值有序的链表
 	public void mergeList(MyLinkedList list){
+		Node p = null;//指向第一个链表中待处理节点
+		Node q = null;//指向第二个链表中待处理节点
+		Node r = null; //指向合并后链表的末尾节点
+		Node h = null; //指向合并后链表的头节点
+
+		//处理头节点
+		if(this.header.data > list.header.data){
+			h = list.header;
+			q = list.header.next;
+			p = this.header;
+		} else {
+			h = this.header;
+			p = this.header.next;
+			q = list.header;
+		}
+		r = h;
 		
+		//循环处理两个链表中的节点
+		while(p != null && q != null){
+			if(p.data > q.data){
+				r.next = q;
+				q = q.next;
+				r = r.next;
+			} else{
+				r.next = p;
+				p = p.next;
+				r = r.next;
+			}
+		}
+		
+		//处理剩余的链表节点
+		if(p != null){
+			r.next = p;
+		}
+		
+		if(q != null){
+			r.next = q;
+		}
+		
+		header = h;
 	}
 	
 	public static void main(String[] args){
@@ -291,5 +330,10 @@ public class MyLinkedList {
 		System.out.println(list);
 		list.connectlist(list1);
 		System.out.println(list);
+		
+		MyLinkedList l1 = new MyLinkedList("abde");
+		MyLinkedList l2 = new MyLinkedList("fg");
+		l1.mergeList(l2);
+		System.out.println(l1);
 	}
 }
