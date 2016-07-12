@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cars>
+	<car>study.java.designpattern.simplefactory.BMW</car>
+	<benz>study.java.designpattern.simplefactory.Benz</benz>
+	<bmw>study.java.designpattern.simplefactory.BMW</bmw>
+	<landrover>study.java.designpattern.simplefactory.LandRover</landrover>
+</cars>
