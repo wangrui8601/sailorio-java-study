@@ -3,12 +3,13 @@ package study.java.thread;
 public class WrongSingleton {
 	private static volatile WrongSingleton instance = null;
 	
-	private WrongSingleton(){}
+	private WrongSingleton(){
+		System.out.println("initialized once.");
+	}
 	
 	public static WrongSingleton getInstance(){
 		if(instance == null){
 			instance = new WrongSingleton();
-			System.out.println("initialized once.");
 		}
 		return instance;
 	}

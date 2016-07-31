@@ -2,16 +2,39 @@ package study.java.thread;
 public class SafeLazySingleton {
 	private static SafeLazySingleton instance = null;
 	
-	private SafeLazySingleton(){}
+	private SafeLazySingleton(){
+		System.out.println("initialize once");
+	}
 	
-	public static SafeLazySingleton getInstance(){
+	//使用synchronized加锁，存在效率问题
+	/*public static SafeLazySingleton getInstance(){
 		synchronized(SafeLazySingleton.class){
 			if(instance == null){
 				instance = new SafeLazySingleton();
-				System.out.println("initialize once");
 			}
 		}
 		return instance;
+	}*/
+	
+	//减小了加锁的范围，代码比较复杂，比前一种的效率没有太大提高
+	/*public static SafeLazySingleton getInstance(){
+		if(instance == null){
+			synchronized(SafeLazySingleton.class){
+				if(instance == null){
+					instance = new SafeLazySingleton();
+				}
+			}
+		}
+		return instance;
+	}*/
+	
+	//使用静态内部类，无锁，静态内部类和普通的内部类相同都是在第一次使用时加载
+	static class InnerClass{
+		private static final SafeLazySingleton inner = new SafeLazySingleton();
+	}
+	
+	public static SafeLazySingleton getInstance(){
+		return InnerClass.inner;
 	}
 	
 	private static class LoopInit implements Runnable{
